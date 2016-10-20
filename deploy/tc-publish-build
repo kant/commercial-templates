@@ -1,0 +1,52 @@
+#!/bin/bash
+
+set -o xtrace
+set -o nounset
+set -o errexit
+
+echo "Templates publish"
+
+set +x
+echo "##teamcity[progressStart 'templates publish']"
+set -x
+
+riffraff_folder="riffraff"
+rm -rf $riffraff_folder
+mkdir $riffraff_folder
+
+cp deploy/deploy.json "$riffraff_folder"
+cp -r build/*        "$riffraff_folder"
+
+echo "Uploading artifact and build manifest to S3"
+
+S3_KEY="dotcom:commercial-templates"
+
+set +u
+if [[ -z $BUILD_NUMBER ]]; then
+  BUILD_NUMBER=0
+fi
+if [[ -z $RIFF_RAFF_BUILD_BUCKET ]]; then
+  RIFF_RAFF_BUILD_BUCKET=aws-frontend-teamcity
+fi
+set -u
+
+BUILD_START_DATE=$(date +"%Y-%m-%dT%H:%M:%S.000Z")
+BUILD_VCS_NUMBER=$(git rev-parse --quiet HEAD)
+ref=$(git symbolic-ref --quiet HEAD)
+BUILD_VCS_BRANCH=${ref#refs/heads/}
+
+sed -e "s|<%build_number%>|$BUILD_NUMBER|" \
+    -e "s|<%start_time%>|$BUILD_START_DATE|" \
+    -e "s|<%revision%>|$BUILD_VCS_NUMBER|" \
+    -e "s|<%branch%>|$BUILD_VCS_BRANCH|" \
+    build-template.json | tee $riffraff_folder/build.json
+
+# copy the build files to the bucket and key supplied
+aws s3 cp --acl bucket-owner-full-control --region=eu-west-1 --recursive $riffraff_folder s3://$RIFF_RAFF_BUILD_BUCKET/$S3_KEY/$BUILD_NUMBER
+
+# copy the deploy JSON to the bucket
+#aws s3api put-object --acl bucket-owner-full-control --region=eu-west-1 --bucket $RIFF_RAFF_BUILD_BUCKET --key $S3_KEY/$BUILD_NUMBER/build.json  --body $riffraff_folder/build.json
+
+set +x
+echo "##teamcity[progressFinish 'templates publish']"
+set -x
