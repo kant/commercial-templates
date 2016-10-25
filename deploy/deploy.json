@@ -1,10 +1,10 @@
 {
     "defaultStacks": ["frontend"],
     "packages":{
-        "frontend-static":{
+        "commercial-templates":{
             "type":"aws-s3",
             "data":{
-                "bucket":"aws-frontend-static",
+                "bucket":"aws-frontend-commercial",
                 "cacheControl":"public, max-age=315360000",
                 "prefixStack": false
             }
