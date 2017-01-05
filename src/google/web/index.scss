@@ -24,7 +24,7 @@ img {
 
 .title {
     font-weight: bold;
-    margin: 6px 100px 40px 10px;
+    margin: 6px 100px 10px 10px;
 }
 
 .title-link {
@@ -32,9 +32,9 @@ img {
     text-decoration: none;
 }
 
-.body,
-.advertiser {
-    display: none;
+.body {
+    margin: 0 100px 40px 10px;
+    font-size: 10px;
 }
 
 .call-to-action {
@@ -62,4 +62,15 @@ img {
     right: 10px;
     top: 180px;
     width: 48px;
+}
+
+.advertiser {
+    font-size: 10px;
+    position: absolute;
+    bottom: 8px;
+    left: 35px;
+}
+
+.advertiser-link {
+    color: #333;
 }
