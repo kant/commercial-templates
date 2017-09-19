@@ -13,5 +13,7 @@
   "Text": "",
   "CallToActionUrl": "www.twitter.com",
   "CallToAction": "Shop now",
-	"Openlinksinnewwindow": "no"
+	"Openlinksinnewwindow": "no",
+  "Font": "https://fonts.googleapis.com/css?family=Indie+Flower",
+  "FontName": "Indie Flower"
 }
